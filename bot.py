@@ -94,10 +94,10 @@ class InstagramBot(Helper):
                 password_field = self.driver.find_element(By.NAME, 'password')
                 password_field.clear()
                 password_field.send_keys(self.account_password, Keys.ENTER)
-                self.driver.implicitly_wait(10)
+                self.random_pause_code(start=1, stop=11)
 
                 self.driver.find_element(
-                    By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div[1]/div[1]/div[1]/section/main/div/div/div/div/div'
+                    By.CLASS_NAME, 'x1i10hfl' # Rejection saving data to login user
                 ).click()
 
                 # TODO: getting cookies
