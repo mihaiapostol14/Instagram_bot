@@ -1,42 +1,57 @@
 # Instagram Bot
 
-This project is an **Instagram Automation Bot** designed for tasks such as logging into an account, saving session cookies, and retrieving posts (photos and reels) from a specified Instagram account. Built using Python and Selenium, it is highly customizable and efficient.
+## Repository Overview
 
----
+**Repository Name:** Instagram Bot  
+**Repository Owner:** [mihaiapostol14](https://github.com/mihaiapostol14)  
+**Language:** Python  
+**Repository URL:** [Instagram Bot](https://github.com/mihaiapostol14/Instagram_bot)  
+**Created On:** December 24, 2024  
+**Last Pushed At:** December 24, 2024  
+**Default Branch:** main  
+**Visibility:** Public  
+**Forks Count:** 0  
+**Open Issues Count:** 0  
+**Stargazers Count:** 0  
+**Watchers Count:** 0  
+
+## Introduction
+
+The **Instagram Bot** project is designed for automating various tasks on Instagram. This bot can log into an Instagram account, manage session cookies, and retrieve posts (photos and reels) from a specified Instagram account. Below are some of the core features of this project.
 
 ## Features
 
-- **Automated Login**: Logs into Instagram using provided credentials and handles authentication cookies.
-- **Cookie Management**: Saves and reuses cookies for session continuity.
-- **Post Scraping**: Fetches photo and reel post URLs from a target account and saves them in categorized text files.
-- **Error Handling**: Graceful handling of missing elements or exceptions during execution.
-- **Dynamic Scrolling**: Scrolls through the Instagram feed dynamically to load and collect more posts.
-- **Custom Browser Settings**: Uses a custom user agent and browser preferences to avoid detection.
-- **Like POST**: Like all user posts
-- **Download user photo** download all types of user photo she can be photo collections or simple photo
-- **Download user Reels** download all user reels
----
+- **Automated Login:** Logs into Instagram using provided credentials and handles authentication cookies.
+- **Cookie Management:** Saves and reuses cookies for session continuity.
+- **Post Scraping:** Fetches photo and reel post URLs from a target account and saves them in categorized text files.
+- **Error Handling:** Graceful handling of missing elements or exceptions during execution.
+- **Dynamic Scrolling:** Scrolls through the Instagram feed dynamically to load and collect more posts.
+- **Like POST:** Like all user posts.
+- **Download User Photo:** Download all types of user photos, whether they are photo collections or simple photos.
+- **Download User Reels:** Download all user reels.
 
-## Prerequisites  
-1. Python 3.x installed on your machine.  
-2. Firefox browser installed.  
-3. GeckoDriver (path configured in `self.service`).  
+## Prerequisites
+
+1. Python 3.x installed on your machine.
+2. Firefox browser installed.
+3. GeckoDriver (path configured in `self.service`).
 4. A valid Pexels account (if needed for specific features).
-5. Website where can you [Get User Agent](https://www.whatismybrowser.com/detect/what-is-my-user-agent/)
+5. Website where you can [Get User Agent](https://www.whatismybrowser.com/detect/what-is-my-user-agent/).
 
+## Setup and Execution
 
+### 1. Clone the Repository
 
----
+```bash
+git clone https://github.com/mihaiapostol14/Instagram_bot.git
+cd Instagram_bot
+```
 
-## Setup and Execution  
-
-### 1. Create and Activate a Virtual Environment
+### 2. Create and Activate a Virtual Environment
 
 **Install Python**
 
-If you don't have python installed, follow [this link](https://www.python.org/downloads/) and download the latest version of python.
-Then you can check if your version of python using the command lines bellow
-
+If you don't have Python installed, follow [this link](https://www.python.org/downloads/) and download the latest version of Python. Then you can check your version of Python using the command lines below:
 
 ```bash
 # Create a virtual environment
@@ -47,16 +62,15 @@ source venv/bin/activate  # Linux/MacOS
 venv\Scripts\activate     # Windows  
 ```
 
-
-### 2. Install the required libraries:  
+### 3. Install the Required Libraries
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Setup project configurations
+### 4. Setup Project Configurations
 
-You can use ```setup_private.py``` or bash code to your preference for create ```.env``` file with private data (user-agent, username, password)
+You can use `setup_private.py` or bash code to your preference for creating a `.env` file with private data (user-agent, username, password):
 
 ```bash
 #!/bin/bash
@@ -90,5 +104,12 @@ echo "ACCOUNT_PASSWORD='account password'" > "$ENV_FILE"
 
 echo ".env file created successfully with data:"
 cat "$ENV_FILE"
+```
 
- ```
+## Contributors
+
+- [mihaiapostol14](https://github.com/mihaiapostol14) - Contributions: 7
+
+---
+
+This detailed markdown description provides an in-depth look at the **Instagram Bot** project, its features, setup instructions, and contributor acknowledgments. Feel free to suggest any additional details or modifications.
