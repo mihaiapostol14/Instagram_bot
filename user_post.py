@@ -1,6 +1,5 @@
 import os
 import pickle
-import time
 
 
 from selenium import webdriver
@@ -15,8 +14,10 @@ from config import (
 )
 from helper import (
     Helper,
+    Downloader,
+    ElementChecker,
+    read_temp_file,
     user_option_list,
-    Downloader, read_temp_file
 )
 import instaloader
 
@@ -40,63 +41,9 @@ class UserPost(Helper, Downloader):
         self.user_option = user_option
         self.dir_name = dir_name
 #        self.mouse_event = ActionChains(self.driver)
+        self.checker = ElementChecker(driver=self.driver)
 
         self.upload_cookies()
-
-    def xpath_exists(self, xpath):
-        """Checks if an element with the given XPath exists on the page."""
-        try:
-            # Attempt to find the element by XPath
-            self.driver.find_element(By.XPATH, xpath)
-            exist = True
-        except NoSuchElementException:
-            # If NoSuchElementException is raised, the element does not exist
-            exist = False
-        return exist
-
-    def css_selector_exists(self, css_selector):
-        """Checks if an element with the given css_selector exists on the page."""
-        try:
-            # Attempt to find the element by css_selector
-            self.driver.find_element(By.CSS_SELECTOR, css_selector)
-            exist = True
-        except NoSuchElementException:
-            # If NoSuchElementException is raised, the element does not exist
-            exist = False
-        return exist
-
-    def id_exists(self, element_id):
-        """Checks if an element with the given ID exists on the page."""
-        try:
-            # Attempt to find the element by XPath
-            self.driver.find_element(By.ID, element_id)
-            exist = True
-        except NoSuchElementException:
-            # If NoSuchElementException is raised, the element does not exist
-            exist = False
-        return exist
-
-    def class_exists(self, class_name):
-        """Checks if an element with the given class name exists on the page."""
-        try:
-            # Attempt to find the element by class name
-            self.driver.find_element(By.CLASS_NAME, class_name)
-            exist = True
-        except NoSuchElementException:
-            # If NoSuchElementException is raised, the element does not exist
-            exist = False
-        return exist
-
-    def tag_exists(self, tag_name):
-        """Checks if an element with the given Tag exists on the page."""
-        try:
-            # Attempt to find the element by Tag
-            self.driver.find_element(By.XPATH, tag_name)
-            exist = True
-        except NoSuchElementException:
-            # If NoSuchElementException is raised, the element does not exist
-            exist = False
-        return exist
 
     def send_by_url(self, url):
         """
@@ -105,7 +52,8 @@ class UserPost(Helper, Downloader):
         # Use the web driver to open the specified URL
         self.driver.get(url=url)
 
-    def iteration_by_post(self,filename):
+    @staticmethod
+    def iteration_by_post(filename):
         # iteration by post link form list
         with open(file=filename, mode='r') as file:
             source = file.read().split()
@@ -153,11 +101,11 @@ class UserPost(Helper, Downloader):
                 self.random_pause_code(start=1, stop=7)
 
                 # Check if the like button exists
-                if self.class_exists(class_name='_aagw'):
+                if self.checker.class_exists(class_name='_aagw'):
                     self.random_pause_code(start=1, stop=7)
 
                     # Locate the like button by its CSS selector attribute
-                    if self.css_selector_exists(css_selector='.xxk16z8 > title:nth-child(1)'):
+                    if self.checker.css_selector_exists(css_selector='.xxk16z8 > title:nth-child(1)'):
                         print('post is liked')
 
                     else:
@@ -178,7 +126,7 @@ class UserPost(Helper, Downloader):
             try:
                 self.send_by_url(url=url)
                 self.random_pause_code(start=1, stop=7)
-                if self.class_exists(class_name='_acng'):
+                if self.checker.class_exists(class_name='_acng'):
 
                     image_count = self.driver.find_elements(By.CLASS_NAME, '_acnb')
                     for index in range(1, len(image_count) + 1):
@@ -186,7 +134,7 @@ class UserPost(Helper, Downloader):
                         self.send_by_url(url=f'https://www.instagram.com/{self.driver.current_url.split("/")[3]}/p/{self.driver.current_url.split("/")[5]}/?img_index={index}')
                         self.random_pause_code(start=1, stop=7)
 
-                        if self.class_exists(class_name='_aagv'):
+                        if self.checker.class_exists(class_name='_aagv'):
 
                             photo_src = self.driver.find_element(By.CLASS_NAME, '_aagv').find_element(By.TAG_NAME, 'img').get_attribute('src')
 
@@ -232,11 +180,11 @@ class UserPost(Helper, Downloader):
             try:
                 self.send_by_url(url=url)  # Navigate to the Reel's URL
                 self.random_pause_code(start=1, stop=7)
-                if self.class_exists(class_name='x5yr21d'):
+                if self.checker.class_exists(class_name='x5yr21d'):
                     self.random_pause_code(start=1, stop=7)
 
                 # Initialize Instaloader with custom options
-                L = instaloader.Instaloader(
+                l = instaloader.Instaloader(
                     download_pictures=False,  # Do not download pictures
                     download_videos=True,  # Download videos
                     dirname_pattern=f"{self.dir_name}/{self.dir_name}_reels",  # Set custom directory for downloads
@@ -253,7 +201,7 @@ class UserPost(Helper, Downloader):
                 reel_url = url
 
                 # Download the reel
-                L.download_post(instaloader.Post.from_shortcode(L.context, reel_url.split("/")[-2]), target='')
+                l.download_post(instaloader.Post.from_shortcode(l.context, reel_url.split("/")[-2]), target='')
 
 
 

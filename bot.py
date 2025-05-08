@@ -12,7 +12,11 @@ from config import (
     ACCOUNT_USERNAME,
     ACCOUNT_PASSWORD
 )
-from helper import Helper, create_temp_file
+from helper import (
+    Helper,
+    ElementChecker,
+    create_temp_file,
+)
 
 
 class InstagramBot(Helper):
@@ -34,40 +38,10 @@ class InstagramBot(Helper):
         self.account_password = account_password
         self.requested_account_url = requested_account_url
 
+
+        self.checker = ElementChecker(driver=self.driver)
+
         self.upload_cookies()
-
-    def xpath_exists(self, xpath):
-        """Checks if an element with the given XPath exists on the page."""
-        try:
-            # Attempt to find the element by XPath
-            self.driver.find_element(By.XPATH, xpath)
-            exist = True
-        except NoSuchElementException:
-            # If NoSuchElementException is raised, the element does not exist
-            exist = False
-        return exist
-
-    def id_exists(self, element_id):
-        """Checks if an element with the given ID exists on the page."""
-        try:
-            # Attempt to find the element by XPath
-            self.driver.find_element(By.ID, element_id)
-            exist = True
-        except NoSuchElementException:
-            # If NoSuchElementException is raised, the element does not exist
-            exist = False
-        return exist
-
-    def class_exists(self, class_name):
-        """Checks if an element with the given class name exists on the page."""
-        try:
-            # Attempt to find the element by class name
-            self.driver.find_element(By.CLASS_NAME, class_name)
-            exist = True
-        except NoSuchElementException:
-            # If NoSuchElementException is raised, the element does not exist
-            exist = False
-        return exist
 
     def send_by_url(self, url):
         """
@@ -82,7 +56,7 @@ class InstagramBot(Helper):
         """
         self.send_by_url(url='https://www.instagram.com/')
         self.driver.implicitly_wait(5)
-        if self.class_exists(class_name='_ab21'):
+        if self.checker.class_exists(class_name='_ab21'):
 
             # TODO: login user
             try:
