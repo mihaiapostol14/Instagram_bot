@@ -64,7 +64,7 @@ class ElementChecker:
         """Checks if an element with the given Tag exists on the page."""
         try:
             # Attempt to find the element by Tag
-            self.driver.find_element(By.XPATH, tag_name)
+            self.driver.find_element(By.TAG_NAME, tag_name)
             exist = True
         except NoSuchElementException:
             # If NoSuchElementException is raised, the element does not exist
