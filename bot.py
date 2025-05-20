@@ -2,10 +2,10 @@ import os
 import pickle
 
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
-from selenium.common.exceptions import NoSuchElementException
 
 from config import (
     USER_AGENT,
@@ -14,8 +14,9 @@ from config import (
 )
 from helper import (
     Helper,
+    DriverHelper,
     ElementChecker,
-    create_temp_file,
+    create_temp_file
 )
 
 
@@ -38,25 +39,19 @@ class InstagramBot(Helper):
         self.account_password = account_password
         self.requested_account_url = requested_account_url
 
-
+        self.driver_helper = DriverHelper(driver=self.driver)
         self.checker = ElementChecker(driver=self.driver)
 
         self.upload_cookies()
 
-    def send_by_url(self, url):
-        """
-        Navigates to the specified URL using the web driver.
-        """
-        # Use the web driver to open the specified URL
-        self.driver.get(url=url)
 
     def login_user(self):
         """
         This method is for login user and getting cookies
         """
-        self.send_by_url(url='https://www.instagram.com/')
+        self.driver_helper.send_by_url(url='https://www.instagram.com/')
         self.driver.implicitly_wait(5)
-        if self.checker.class_exists(class_name='_ab21'):
+        if self.checker.class_exists(class_name='_aa4a'):
 
             # TODO: login user
             try:
@@ -68,7 +63,7 @@ class InstagramBot(Helper):
                 password_field = self.driver.find_element(By.NAME, 'password')
                 password_field.clear()
                 password_field.send_keys(self.account_password, Keys.ENTER)
-                self.random_pause_code(start=1, stop=11)
+                self.random_pause_code(start=1, stop=20)
 
                 self.driver.find_element(
                     By.CLASS_NAME, 'x1i10hfl' # Rejection saving data to login user
@@ -80,16 +75,17 @@ class InstagramBot(Helper):
                     self.driver.get_cookies(),
                     open(f'cookies/{self.account_username}_cookies', mode='wb')
                 )
-                self.random_pause_code(start=1, stop=5)
+                self.random_pause_code(start=1, stop=11)
 
 
             except Exception as ex:
                 print(ex)
-            self.close_driver()
+                print('nn')
+            self.driver_helper.close_driver()
 
     def get_account_post(self, account_name=''):
 
-        self.send_by_url(url=f'https://www.instagram.com/{account_name}/')
+        self.driver_helper.send_by_url(url=f'https://www.instagram.com/{account_name}/')
         self.random_pause_code(start=1, stop=5)
         create_temp_file(data=account_name)
 
@@ -131,13 +127,13 @@ class InstagramBot(Helper):
 
         except NoSuchElementException:
             ...
-        self.close_driver()
+        self.driver_helper.close_driver()
 
     def upload_cookies(self):
         """upload cookies"""
         try:
             if os.path.exists('cookies'):
-                self.send_by_url(url='https://www.instagram.com/')
+                self.driver_helper.send_by_url(url='https://www.instagram.com/')
                 for cookies in pickle.load(
                         open(f'cookies/{self.account_username}_cookies', mode='rb')
                 ):
@@ -148,17 +144,12 @@ class InstagramBot(Helper):
                 self.get_account_post(account_name=self.requested_account_url.split('/')[3])
 
             else:
-                self.login_user()
+                return self.login_user()
         except FileExistsError as ex:
             print(ex)
-            self.close_driver()
+            self.driver_helper.close_driver()
 
 
-    def close_driver(self):
-        """Close driver"""
-
-        self.driver.close()
-        self.driver.quit()
 
 
 def main():

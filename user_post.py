@@ -15,9 +15,10 @@ from config import (
 from helper import (
     Helper,
     Downloader,
+    DriverHelper,
     ElementChecker,
     read_temp_file,
-    user_option_list,
+    user_option_list
 )
 import instaloader
 
@@ -41,16 +42,11 @@ class UserPost(Helper, Downloader):
         self.user_option = user_option
         self.dir_name = dir_name
 #        self.mouse_event = ActionChains(self.driver)
+        self.driver_helper = DriverHelper(driver=self.driver)
         self.checker = ElementChecker(driver=self.driver)
 
         self.upload_cookies()
 
-    def send_by_url(self, url):
-        """
-        Navigates to the specified URL using the web driver.
-        """
-        # Use the web driver to open the specified URL
-        self.driver.get(url=url)
 
     @staticmethod
     def iteration_by_post(filename):
@@ -97,7 +93,7 @@ class UserPost(Helper, Downloader):
 
             try:
                 # Navigate to the post URL
-                self.send_by_url(url=url)
+                self.driver_helper.send_by_url(url=url)
                 self.random_pause_code(start=1, stop=7)
 
                 # Check if the like button exists
@@ -117,21 +113,21 @@ class UserPost(Helper, Downloader):
                 print(f"Error interacting with the post at {url}: {ex}")
 
         # Close the driver after processing all posts
-        return self.close_driver()
+        return self.driver_helper.close_driver()
 
     def get_photo_from_post(self):
         for url in self.iteration_by_post(filename=f'{self.dir_name}/photo_posts.txt'):
             self.random_pause_code(start=1, stop=7)
 
             try:
-                self.send_by_url(url=url)
+                self.driver_helper.send_by_url(url=url)
                 self.random_pause_code(start=1, stop=7)
                 if self.checker.class_exists(class_name='_acng'):
 
                     image_count = self.driver.find_elements(By.CLASS_NAME, '_acnb')
                     for index in range(1, len(image_count) + 1):
                         self.random_pause_code(start=1, stop=7)
-                        self.send_by_url(url=f'https://www.instagram.com/{self.driver.current_url.split("/")[3]}/p/{self.driver.current_url.split("/")[5]}/?img_index={index}')
+                        self.driver_helper.send_by_url(url=f'https://www.instagram.com/{self.driver.current_url.split("/")[3]}/p/{self.driver.current_url.split("/")[5]}/?img_index={index}')
                         self.random_pause_code(start=1, stop=7)
 
                         if self.checker.class_exists(class_name='_aagv'):
@@ -159,7 +155,7 @@ class UserPost(Helper, Downloader):
             except NoSuchElementException:
                 ...
             if self.driver.current_url == self.iteration_by_post(filename=f'{self.dir_name}/photo_posts.txt')[-1]:
-                self.close_driver()
+                self.driver_helper.close_driver()
 
                 self.remove_duplicate(
                     default=f'{self.dir_name}/photo_src.txt',
@@ -178,7 +174,7 @@ class UserPost(Helper, Downloader):
             self.random_pause_code(start=1, stop=7)
 
             try:
-                self.send_by_url(url=url)  # Navigate to the Reel's URL
+                self.driver_helper.send_by_url(url=url)  # Navigate to the Reel's URL
                 self.random_pause_code(start=1, stop=7)
                 if self.checker.class_exists(class_name='x5yr21d'):
                     self.random_pause_code(start=1, stop=7)
@@ -210,11 +206,11 @@ class UserPost(Helper, Downloader):
 
             # Close the driver if at the last URL
             if self.driver.current_url == self.iteration_by_post(filename=f'{self.dir_name}/reel_posts.txt')[-1]:
-                return self.close_driver()
+                return self.driver_helper.close_driver()
 
             # Close the driver if at the last URL
             if self.driver.current_url == self.iteration_by_post(filename=f'{self.dir_name}/reel_posts.txt')[-1]:
-                return self.close_driver()
+                return self.driver_helper.close_driver()
 
     def select_option(self, option=''):
         match option:
@@ -229,7 +225,7 @@ class UserPost(Helper, Downloader):
     def upload_cookies(self):
         try:
             if os.path.exists('cookies'):
-                self.send_by_url(url='https://www.instagram.com/')
+                self.driver_helper.send_by_url(url='https://www.instagram.com/')
                 for cookies in pickle.load(
                         open(f'cookies/{self.account_username}_cookies', mode='rb')
                 ):
@@ -244,13 +240,8 @@ class UserPost(Helper, Downloader):
                 ...
         except FileExistsError as ex:
             print(ex)
-        self.close_driver()
+        self.driver_helper.close_driver()
 
-    def close_driver(self):
-        """Close driver"""
-
-        self.driver.close()
-        self.driver.quit()
 
 
 def main():
